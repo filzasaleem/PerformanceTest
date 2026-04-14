@@ -1,11 +1,16 @@
 using Microsoft.EntityFrameworkCore;
+using PerformanceTest.Data;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<DbContext>(options =>
-    options.UseSqlServer(connectionString));
+
+builder.Services.AddDbContext<PerformanceDbContext>(options =>
+    options
+        .UseLazyLoadingProxies()
+        .UseSqlServer(connectionString));
+
 
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
