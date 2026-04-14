@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PerformanceTest.Data;
 
@@ -11,9 +12,11 @@ using PerformanceTest.Data;
 namespace PerformanceTest.Migrations
 {
     [DbContext(typeof(PerformanceDbContext))]
-    partial class PerformanceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260414121700_fixPricedAndNullablility")]
+    partial class fixPricedAndNullablility
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

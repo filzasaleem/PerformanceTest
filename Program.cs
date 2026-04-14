@@ -17,6 +17,7 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -24,6 +25,14 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<PerformanceDbContext>();
+
+    await db.Database.MigrateAsync();
+
+    await SeedData.InitializeAsync(db);
+}
 app.UseHttpsRedirection();
 
 

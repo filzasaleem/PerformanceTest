@@ -11,8 +11,8 @@ namespace PerformanceTest.Models
         public string Content { get; set; }
         public int Rating { get; set; } // between 1-10
         public Guid ProductId { get; set; }
-        public virtual Product Product { get; set; }
+        public virtual Product? Product { get; set; }
         public Guid AuthorId { get; set; }
-        public virtual Author Author { get; set; }
+        public virtual Author? Author { get; set; }
     }
 }
