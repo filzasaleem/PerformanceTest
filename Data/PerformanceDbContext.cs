@@ -22,6 +22,9 @@ namespace PerformanceTest.Data
             modelBuilder.Entity<Product>().HasMany(p => p.Reviews).WithOne(r => r.Product).HasForeignKey(r => r.ProductId).OnDelete(DeleteBehavior.Cascade);
             //Author has many reviews
             modelBuilder.Entity<Author>().HasMany(a => a.Reviews).WithOne(r => r.Author).HasForeignKey(r => r.AuthorId).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Product>().HasIndex(p => p.Name);
+            modelBuilder.Entity<Review>().HasIndex(r => r.ProductId);
+            modelBuilder.Entity<Review>().HasIndex(r => r.AuthorId);
         }
 
     }

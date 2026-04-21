@@ -46,5 +46,34 @@ namespace PerformanceTest.Controllers
             }).ToList();
             return result;
         }
+        [HttpGet("projection-performance")]
+        public List<ProductDto> GetProductsProjection()
+        {
+            var result = _db.Products.Select(p => new ProductDto
+            {
+                Name = p.Name,
+                ReviewCount = p.Reviews.Count()
+            }).ToList();
+            return result;
+
+        }
+        [HttpGet("search/{name}")]
+        public async Task<IActionResult> Search(string name)
+        {
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+
+            var product = await _db.Products
+                .FirstOrDefaultAsync(p => p.Name == name);
+
+            sw.Stop();
+
+            if (product == null) return NotFound();
+
+            return Ok(new
+            {
+                Found = product.Name,
+                DurationMs = sw.Elapsed.TotalMilliseconds
+            });
+        }
     }
 }
