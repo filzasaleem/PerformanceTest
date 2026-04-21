@@ -76,7 +76,7 @@ namespace PerformanceTest.Data
                         Content = $"Review {i + 1} for {product.Name}",
                         Rating = random.Next(1, 11),
                         ProductId = product.Id,
-                        AuthorId = author.Id
+                        // AuthorId = author.Id
                     });
                 }
             }

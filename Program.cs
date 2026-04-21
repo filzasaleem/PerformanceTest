@@ -9,7 +9,10 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<PerformanceDbContext>(options =>
     options
         .UseLazyLoadingProxies()
-        .UseSqlServer(connectionString));
+        .UseSqlServer(connectionString)
+        .EnableSensitiveDataLogging()
+        .EnableDetailedErrors()
+        .LogTo(Console.WriteLine, LogLevel.Information));
 
 
 builder.Services.AddOpenApi();
