@@ -18,7 +18,10 @@ namespace PerformanceTest.Data
             {
                 new Author { Id = Guid.NewGuid(), UserName = "Alex" },
                 new Author { Id = Guid.NewGuid(), UserName = "Emma" },
-                new Author { Id = Guid.NewGuid(), UserName = "Noah" }
+                new Author { Id = Guid.NewGuid(), UserName = "Noah" },
+                new Author { Id = Guid.NewGuid(), UserName = "Jane" },
+                new Author { Id = Guid.NewGuid(), UserName = "John" },
+                new Author { Id = Guid.NewGuid(), UserName = "Doe" }
             };
 
             db.Authors.AddRange(authors);
@@ -27,62 +30,47 @@ namespace PerformanceTest.Data
             // -----------------------
             // 2. PRODUCTS
             // -----------------------
-            var productNames = new List<string>
-            {
-                "Gaming Laptop Pro X1",
-                "Wireless Noise Cancelling Headphones",
-                "Smart Fitness Watch Series 5",
-                "4K Ultra HD Monitor 27 inch",
-                "Mechanical Gaming Keyboard RGB",
-                "Ergonomic Office Chair Pro",
-                "Portable SSD 1TB Extreme",
-                "Smartphone Pro Max Ultra",
-                "Bluetooth Speaker Boom 360",
-                "Action Camera 5K Pro"
-            };
 
-            var products = new List<Product>();
 
-            foreach (var name in productNames)
-            {
-                products.Add(new Product
-                {
-                    Id = Guid.NewGuid(),
-                    Name = name,
-                    Description = "Sample product description",
-                    Price = 99.90m
-
-                });
-            }
-
-            db.Products.AddRange(products);
-            await db.SaveChangesAsync();
-
-            // -----------------------
-            // 3. REVIEWS (IMPORTANT PART)
-            // -----------------------
             var random = new Random();
-            var reviews = new List<Review>();
+            var batchSize = 1000;
+            var totalProducts = 50000;
 
-            foreach (var product in products)
+            for (int i = 1; i <= totalProducts; i++)
             {
-                for (int i = 0; i < 5; i++)
+                var productId = Guid.NewGuid();
+                var product = new Product
                 {
-                    var author = authors[random.Next(authors.Count)];
+                    Id = productId,
+                    Name = $"Product_Batch_{i}",
+                    Description = "Bulk seeded product for indexing test.",
+                    Price = (decimal)(random.NextDouble() * 1000)
+                };
+                db.Products.Add(product);
 
-                    reviews.Add(new Review
+                // Add 5 reviews for every product to create "deep" data
+                for (int j = 1; j <= 5; j++)
+                {
+                    db.Reviews.Add(new Review
                     {
                         Id = Guid.NewGuid(),
-                        Content = $"Review {i + 1} for {product.Name}",
+                        Content = $"Review {j} for product {i}",
                         Rating = random.Next(1, 11),
-                        ProductId = product.Id,
-                        // AuthorId = author.Id
+                        ProductId = productId,
+                        AuthorId = authors[random.Next(authors.Count)].Id
                     });
+                }
+
+                // Save in batches to avoid memory overflow in Docker
+                if (i % batchSize == 0)
+                {
+                    await db.SaveChangesAsync();
+                    Console.WriteLine($"Seeded {i} products and {i * 5} reviews...");
                 }
             }
 
-            db.Reviews.AddRange(reviews);
-            await db.SaveChangesAsync();
+
+
         }
     }
 }
